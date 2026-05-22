@@ -69,7 +69,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            echo "${{secrests.ghcr_token}}" | docker login ghcr.io -u a-marbach --password-stdin
+            echo "${{secrets.ghcr_token}}" | docker login ghcr.io -u a-marbach --password-stdin
             docker pull ghcr.io/a-marbach/bookstore-api:latest
             docker stop bookstore-api || true
             docker rm bookstore-api || true
