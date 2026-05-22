@@ -51,5 +51,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/github.a-marbach/bookstore-api:latest
-            ghcr.io/github.a-marbach/bookstore-api:${{ github.sha }}
+            ghcr.io/a-marbach/bookstore-api:latest
+            ghcr.io/a-marbach/bookstore-api:${{ github.sha }}
