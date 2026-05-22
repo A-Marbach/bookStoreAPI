@@ -57,21 +57,35 @@ jobs:
 
 
   deploy:
-    needs: docker
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.2
-        with:
-          host: ${{ secrets.SSH_HOST}}
-          username: ${{ secrets.SSH_USER}}
-          key: ${{ secrets.SSH_KEY  }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
-            echo "${{secrets.ghcr_token}}" | docker login ghcr.io -u a-marbach --password-stdin
-            docker pull ghcr.io/a-marbach/bookstore-api:latest
-            docker stop bookstore-api || true
-            docker rm bookstore-api || true
-            docker run -d -p 8080:8080 --restart unless-stopped --name bookstore-api ghcr.io/a-marbach/bookstore-api:latest
-            docker image prune -f
+      needs: docker
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup SSH key
+          run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+        - name: Copy docker-compose to VM
+          run: |
+            scp -i ~/.ssh/id_rsa docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/bookstore-api/
+
+        - name: Deploy via SSH
+          uses: appleboy/ssh-action@v1.2.2
+          with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            key: ${{ secrets.SSH_KEY }}
+            port: ${{ secrets.SSH_PORT }}
+            script: |
+              set -e
+              cd ~/bookstore-api
+              echo "${{ secrets.ghcr_token }}" | docker login ghcr.io -u a-marbach --password-stdin
+              docker compose pull
+              docker compose down
+              docker compose up -d
+              docker image prune -f
