@@ -68,9 +68,19 @@ jobs:
             ghcr.io/a-marbach/bookstore-api:${{ github.sha }}
 
 
+  scan:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scan Image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/a-marbach/bookstore-api:latest
+          format: table
+          severity: CRITICAL,HIGH
 
   deploy:
-      needs: docker
+      needs: scan
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
