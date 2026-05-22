@@ -53,3 +53,25 @@ jobs:
           tags: |
             ghcr.io/a-marbach/bookstore-api:latest
             ghcr.io/a-marbach/bookstore-api:${{ github.sha }}
+
+
+
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          username: ${{ secrets.SSH_USER}}
+          key: ${{ secrets.SSH_KEY  }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            echo "${{secrests.ghcr_token}}" | docker login ghcr.io -u a-marbach --password-stdin
+            docker pull ghcr.io/a-marbach/bookstore-api:latest
+            docker stop bookstore-api || true
+            docker rm bookstore-api || true
+            docker run -d -p 8080:8080 --restart unless-stopped --name bookstore-api ghcr.io/a-marbach/bookstore-api:latest
+            docker image prune -f
