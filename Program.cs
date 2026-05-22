@@ -1,4 +1,5 @@
 // <snippet_UsingModels>
+using Prometheus;
 using BookStoreApi.Models;
 // </snippet_UsingModels>
 // <snippet_UsingServices>
@@ -38,6 +39,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMetricServer();
 
 app.MapControllers();
 
