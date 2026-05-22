@@ -70,6 +70,17 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
+
+        - name: Create directory on VM
+          uses: appleboy/ssh-action@v1.2.2
+          with:
+              host: ${{ secrets.SSH_HOST }}
+              username: ${{ secrets.SSH_USER }}
+              key: ${{ secrets.SSH_KEY }}
+              port: ${{ secrets.SSH_PORT }}
+              script: mkdir -p ~/bookstore-api
+
+
         - name: Copy docker-compose to VM
           run: |
             scp -i ~/.ssh/id_rsa docker-compose.yaml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/bookstore-api/
@@ -83,7 +94,6 @@ jobs:
             port: ${{ secrets.SSH_PORT }}
             script: |
               set -e
-              mkdir -p ~/bookstore-api
               cd ~/bookstore-api
               echo "${{ secrets.ghcr_token }}" | docker login ghcr.io -u a-marbach --password-stdin
               docker compose pull
