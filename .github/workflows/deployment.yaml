@@ -83,6 +83,7 @@ jobs:
             port: ${{ secrets.SSH_PORT }}
             script: |
               set -e
+              mkdir -p ~/bookstore-api
               cd ~/bookstore-api
               echo "${{ secrets.ghcr_token }}" | docker login ghcr.io -u a-marbach --password-stdin
               docker compose pull
