@@ -29,10 +29,23 @@ jobs:
         run: dotnet build --no-restore
 
 
+  lint:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error
+
 
 
   docker:
-    needs: build
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
