@@ -72,7 +72,7 @@ jobs:
 
         - name: Copy docker-compose to VM
           run: |
-            scp -i ~/.ssh/id_rsa docker-compose.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/bookstore-api/
+            scp -i ~/.ssh/id_rsa docker-compose.yaml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/bookstore-api/
 
         - name: Deploy via SSH
           uses: appleboy/ssh-action@v1.2.2
