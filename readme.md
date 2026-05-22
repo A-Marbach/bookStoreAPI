@@ -126,16 +126,7 @@
 
   Pipeline Flow Diagram
 
-  flowchart TD
-      GitHubRepo[GitHub Repository] -->|Push to main/feature| Actions[GitHub Actions]
-      Actions --> Build["⚙️  Build .NET App"]
-      Build --> Lint["🔴 Hadolint Dockerfile"]
-      Lint --> Docker["🐳 Build & Push to GHCR"]
-      Docker --> Trivy["🔴 Trivy Image Scan"]
-      Trivy --> SSH["🔐 SSH to VM"]
-      SSH --> Compose["Docker Compose Pull & Up"]
-      Compose --> Running["✅ Containers Running"]
-
+ 
   Required Secrets
 
   ┌────────────┬───────────────────────────────────────┐
@@ -154,7 +145,7 @@
 
   Workflow File
 
-  - Location: .github/workflows/pipeline.yml
+  - Location: .github/workflows/pipeline.yaml
 
   Troubleshooting
 
@@ -171,8 +162,5 @@
 
   Pipeline failed: Hadolint error
 
-  1. Check GitHub Actions logs for the specific error
-  2. Fix the Dockerfile
-  3. Commit and push
 
   ---
