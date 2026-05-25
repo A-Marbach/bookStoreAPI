@@ -4,7 +4,7 @@
   CI/CD pipeline with enterprise-grade security scanning.
 
   ## Table of Contents
-   -[Quickstart](#quickstart)
+  - [Quickstart](#quickstart)
   - [Usage](#usage)
   - [Environment Variables](#environment-variables)
   - [Volumes](#volumes)
