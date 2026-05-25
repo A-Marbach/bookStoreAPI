@@ -4,13 +4,15 @@
   CI/CD pipeline with enterprise-grade security scanning.
 
   ## Table of Contents
-  - [Quickstart](#quickstart)
+   -[Quickstart](#quickstart)
   - [Usage](#usage)
   - [Environment Variables](#environment-variables)
   - [Volumes](#volumes)
   - [Security](#security)
   - [GitHub Actions Pipeline](#github-actions-pipeline)
+  - [Monitoring](#monitoring)
   - [Troubleshooting](#troubleshooting)
+
 
   ## Quickstart
 
@@ -143,9 +145,17 @@
   │ SSH_PORT   │ SSH port (default: 22)                │
   └────────────┴───────────────────────────────────────┘
 
-  Workflow File
+Workflow File
 
   - Location: .github/workflows/pipeline.yaml
+
+  Monitoring
+
+  - Prometheus scrapes /metrics every 15 seconds
+  - Grafana dashboard shows Memory, CPU and Request Rate
+  - Health check endpoint: GET /health – returns Healthy when API is up
+  - MongoDB health check: mongosh ping – checks database connectivity
+  - Both containers report health status via docker ps
 
   Troubleshooting
 
@@ -160,7 +170,7 @@
   docker logs bookstore-api-api-1
   docker logs bookstore-api-mongodb-1
 
-  Pipeline failed: Hadolint error
+  Check container health
 
+  docker inspect bookstore-api-api-1 | grep -A 10 '"Health"'
 
-  ---
