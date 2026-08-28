@@ -1,6 +1,6 @@
 # BookStore API – DevSecOps Project
 
-A containerized ASP.NET Core Web API with MongoDB, featuring an automated CI/CD pipeline with enterprise-grade security scanning.
+A containerized ASP.NET Core Web API with MongoDB, featuring an automated CI/CD pipeline with automated security scanning.
 
 ## Table of Contents
 
