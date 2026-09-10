@@ -1,6 +1,8 @@
-# BookStore API – DevSecOps Project
+# BookStore API 
 
-A containerized ASP.NET Core Web API with MongoDB, featuring an automated CI/CD pipeline with enterprise-grade security scanning.
+Containerized ASP.NET Core Web API with MongoDB, Docker Compose, CI/CD, security scanning and monitoring.
+
+This project demonstrates container operation, application deployment, health checks, monitoring and troubleshooting in a Linux-based environment.
 
 ## Table of Contents
 
@@ -12,6 +14,7 @@ A containerized ASP.NET Core Web API with MongoDB, featuring an automated CI/CD 
 - [GitHub Actions Pipeline](#github-actions-pipeline)
 - [Monitoring](#monitoring)
 - [Troubleshooting](#troubleshooting)
+- [Skills Demonstrated](#skills-demonstrated)
 
 ---
 
@@ -21,7 +24,6 @@ A containerized ASP.NET Core Web API with MongoDB, featuring an automated CI/CD 
 
 - Docker
 - Docker Compose
-- GitHub Actions enabled (for automated build & deployment)
 
 ### Steps
 
@@ -52,27 +54,27 @@ The API provides full CRUD operations for a book store:
 
 | Method | Endpoint        | Description     |
 |--------|-----------------|-----------------|
-| GET    | /api/books      | Get all books   |
-| GET    | /api/books/{id} | Get book by ID  |
-| POST   | /api/books      | Create new book |
-| PUT    | /api/books/{id} | Update book     |
-| DELETE | /api/books/{id} | Delete book     |
+| GET    | `/api/books`      | Get all books   |
+| GET    | `/api/books/{id}` | Get book by ID  |
+| POST   | `/api/books`      | Create new book |
+| PUT    | `/api/books/{id}` | Update book     |
+| DELETE | `/api/books/{id}` | Delete book     |
 
 ---
 
 ## Environment Variables
 
-| Variable                               | Description               | Default                 |
-|----------------------------------------|---------------------------|-------------------------|
-| BookStoreDatabase__ConnectionString    | MongoDB connection string | mongodb://mongodb:27017 |
-| BookStoreDatabase__DatabaseName        | Database name             | BookStore               |
-| BookStoreDatabase__BooksCollectionName | Collection name           | Books                   |
+| Variable                                 | Description               | Default                   |
+|------------------------------------------|---------------------------|---------------------------|
+| `BookStoreDatabase__ConnectionString`    | MongoDB connection string | `mongodb://mongodb:27017` |
+| `BookStoreDatabase__DatabaseName`        | Database name             | `BookStore`               |
+| `BookStoreDatabase__BooksCollectionName` | Collection name           | `Books`                   |
 
 ---
 
 ## Volumes
 
-- `mongodb_data` – Persistent MongoDB storage, data survives container restarts
+- `mongodb_data` – Persistent MongoDB storage that survives container restarts and container recreation
 
 ```bash
 # Restart containers
@@ -81,7 +83,7 @@ docker compose restart
 # Stop and remove containers
 docker compose down
 
-# Remove including volumes (deletes data!)
+# Remove containers and volumes (deletes database data!)
 docker compose down -v
 ```
 
@@ -89,16 +91,16 @@ docker compose down -v
 
 ## Security
 
-### Best Practices
+### Security Practices
 
 - Do not commit `.env` files or credentials to the repository
 - Do not hardcode connection strings or passwords
 - Use GitHub Secrets for all sensitive values
-- Use Multi-Stage Builds to keep images small and secure
+- Use multi-stage Docker builds to reduce image size and attack surface
 
 ### Security Pipeline Flow
 
-```
+```text
 Push to GitHub
        ↓
 Stage 1: Dockerfile Linting (Hadolint)
@@ -125,6 +127,8 @@ Stage 4: Deploy to VM
 
 ## GitHub Actions Pipeline
 
+The GitHub Actions workflow builds, validates, scans and deploys the application automatically.
+
 ### Workflow Overview
 
 ```
@@ -143,21 +147,23 @@ Stage 4: Deploy to VM
 
 ### Required Secrets
 
-| Secret     | Description                            |
-|------------|----------------------------------------|
-| ghcr_token | GitHub Personal Access Token for GHCR |
-| SSH_HOST   | VM IP address                          |
-| SSH_USER   | SSH username                           |
-| SSH_KEY    | SSH private key                        |
-| SSH_PORT   | SSH port (default: 22)                 |
+| Secret | Description |
+|--------|-------------|
+| `ghcr_token` | GitHub Personal Access Token for GHCR |
+| `SSH_HOST` | VM IP address |
+| `SSH_USER` | SSH username |
+| `SSH_KEY` | SSH private key |
+| `SSH_PORT` | SSH port (default: 22) |
 
 ### Workflow File
 
-- Location: `.github/workflows/deployment.yaml`
+`.github/workflows/deployment.yaml`
 
 ---
 
 ## Monitoring
+
+The application exposes metrics and health checks for basic operational monitoring and troubleshooting.
 
 - Prometheus scrapes `/metrics` every 15 seconds
 - Grafana dashboard shows Memory, CPU and Request Rate
@@ -171,21 +177,51 @@ Stage 4: Deploy to VM
 
 ### Port already in use
 
+Check running containers:
+
 ```bash
 docker ps
+```
+Stop the conflicting container if necessary:
+
+```bash
 docker stop <container-id>
 docker compose up -d
 ```
 
 ### MongoDB connection error
 
+Check application and database logs:
+
 ```bash
-docker logs bookstore-api-api-1
-docker logs bookstore-api-mongodb-1
+docker compose logs api
+docker compose logs mongodb
 ```
 
 ### Check container health
 
 ```bash
-docker inspect bookstore-api-api-1 | grep -A 10 '"Health"'
+docker compose ps
 ```
+
+For detailed health information:
+
+```bash
+docker inspect <container-name>
+```
+
+---
+
+## Skills Demonstrated
+
+- Linux-based Application Operations
+- Docker and Docker Compose
+- MongoDB
+- CI/CD with GitHub Actions
+- Container Image Security Scanning
+- Prometheus Monitoring
+- Grafana Dashboards
+- Health Checks
+- Log Analysis
+- Container Troubleshooting
+- SSH-based Deployment
